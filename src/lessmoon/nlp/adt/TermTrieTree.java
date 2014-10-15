@@ -7,7 +7,7 @@ public class TermTrieTree extends NodeBasic {
     TermInfoNode tif =  new TermInfoNode();
     final String term;
 
-    TermTrieTree(String t){
+    public TermTrieTree(String t){
         super(TERMTREE);
         term = t;
     }
