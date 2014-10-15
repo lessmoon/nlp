@@ -2,56 +2,11 @@ package lessmoon.nlp.adt;
 
 import java.util.*;
 
-abstract class NodeBasic {
-    public final int tag;
-
-    public NodeBasic(final int t){
-        tag = t;
-    }
-    
-    public abstract NodeBasic insert(final String term,final int pos,final String type);
-    
-    static public final int TERMTREE        = 0,
-                            TERMINFONODE    = 1;
-}
-
-class TermInfoNode extends NodeBasic {
-    Map<String,Integer> types = new HashMap<String,Integer>();
-    
-    public TermInfoNode(){
-        super(TERMINFONODE);
-    }
-
-    public NodeBasic insert(final String term,final int pos,final String type) {
-        Integer count = types.get(type);
-        /*For Test*/
-        System.out.println("OK");
-        if( count == null ){
-            types.put(type,1);
-        } else {
-            types.put(type,count.intValue() + 1);
-        }
-        return this;
-    }
-    
-    public String toString() {
-        StringBuffer buf  = new StringBuffer();
-        buf.append("( ");
-        Set< Map.Entry<String,Integer> >  s = types.entrySet();
-        for( Map.Entry<String,Integer> e : s ){
-            buf.append(e.getKey() + ":" + e.getValue() + " ");
-        }
-        buf.append(")");
-        return buf.toString();
-    }
-}
-
 public class TermTrieTree extends NodeBasic {
     Map<Integer,TermTrieTree> chars = new HashMap<Integer,TermTrieTree>();
     TermInfoNode tif =  new TermInfoNode();
     final String term;
 
-    
     TermTrieTree(String t){
         super(TERMTREE);
         term = t;
@@ -60,7 +15,6 @@ public class TermTrieTree extends NodeBasic {
     public NodeBasic insert(final String t,final int pos,final String type){        
         NodeBasic n = null;
         if( pos >= t.length() ) {
-            System.out.println("OK66");
             n = tif;
         } else {
             /*if the node doesn't exist,create it*/
@@ -89,7 +43,6 @@ public class TermTrieTree extends NodeBasic {
                 buf.append(" ");
             buf.append("|" + (char)e.getKey().intValue() + ":"  + e.getValue());
         }
-        System.out.println(term + ".count:" + s.size());
         return buf.toString();
     }
     
