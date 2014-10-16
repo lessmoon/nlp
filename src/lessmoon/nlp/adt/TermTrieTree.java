@@ -7,11 +7,20 @@ public class TermTrieTree extends NodeBasic {
     TermInfoNode tif =  new TermInfoNode();
     final String term;
 
-    public TermTrieTree(String t){
+    public TermTrieTree(){
+        super(TERMTREE);
+        term = "";
+    }
+
+    protected TermTrieTree(String t){
         super(TERMTREE);
         term = t;
     }
 
+    public NodeBasic insert(final String t,final String type){
+        return insert(t,0,type);
+    }
+    
     public NodeBasic insert(final String t,final int pos,final String type){        
         NodeBasic n = null;
         if( pos >= t.length() ) {
@@ -29,10 +38,22 @@ public class TermTrieTree extends NodeBasic {
         return n.insert(t,pos + 1,type);
     }
     
-    public String getThisLevelTerm(){
+    public boolean isValidTerm(){
+        return !tif.isEmpty();
+    }
+    
+    public String getTerm(){
         return term;
     }
     
+    public TermInfoNode getTermInfo(){
+        return tif;
+    }
+
+    public TermTrieTree getTermTreeChildNode(final char c){
+        return chars.get((int)c);
+    }
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
         int len = term.length();
@@ -48,7 +69,7 @@ public class TermTrieTree extends NodeBasic {
     
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        TermTrieTree ttt = new TermTrieTree("");
+        TermTrieTree ttt = new TermTrieTree();
         while(true){
             String term  = scanner.nextLine();
             String type  = scanner.nextLine();

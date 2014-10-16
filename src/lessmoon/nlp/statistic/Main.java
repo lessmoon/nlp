@@ -13,12 +13,12 @@ public class Main{
                 return bf.read();
             }
         });
-        TermTrieTree ttt = new TermTrieTree("");
+        TermTrieTree ttt = new TermTrieTree();
         
         
         DataNode n = null;
         while((n = datareader.readDataNode()) != null){
-            ttt.insert(n.term,0,n.type);
+            ttt.insert(n.term,n.type);
         }
         
         System.out.println(ttt);
