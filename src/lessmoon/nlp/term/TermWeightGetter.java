@@ -9,11 +9,11 @@ import java.util.*;
 public class TermWeightGetter {
     TermTrieTree tttree;
     lessmoon.nlp.util.Dictionary   dictionary;
-    public static final int BASE_LEVEL        = 1;
+    public static final int BASE_LEVEL        = 5;
     public static final int DICTIONARY_FACTOR = 20;
     public static final int ACCURACY_FACTOR   = 1000;
     public static final int ZERO_LEVEL        = 0;
-    
+    public static final int TERM_LENGTH_FACTOR= 10;
     public TermWeightGetter(TermTrieTree ttt,lessmoon.nlp.util.Dictionary dic){
         tttree      = ttt;
         dictionary  = dic;
@@ -44,7 +44,7 @@ public class TermWeightGetter {
                 type = ty;
                 break;
             }
-            w += DICTIONARY_FACTOR;
+            w += DICTIONARY_FACTOR * term.length();
         } else {
             return new TermEntry(new DataNode(term,type),ZERO_LEVEL);
         }

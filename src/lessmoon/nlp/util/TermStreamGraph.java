@@ -7,28 +7,38 @@ import lessmoon.nlp.term.*;
 import java.util.*;
 
 
-class TermGraphNode {
+abstract class TermGraphEdgeBasic {
+    public abstract int getWeight();
+    public abstract DataNode getTerm();
+}
+
+abstract class MainPathNodeBasic {
+    public abstract void addEdge(TermGraphEdgeBasic e);
+}
+
+
+class TermGraphEdge extends TermGraphEdgeBasic {
     final int         weight;
-    TermGraphNode     nextnode;
-    final DataNode    term;             
-    boolean           isMainPathNode;
+    MainPathNodeBasic nextnode;
+    final DataNode    term;
 
-
-    public TermGraphNode(DataNode t,int w,TermGraphNode next){
+    public TermGraphEdge(DataNode t,int w,MainPathNodeBasic next){
         term = t;
         weight = w;
         nextnode = next;
-        isMainPathNode = false;
     }
 
-    public TermGraphNode(DataNode t,int w){
+    public TermGraphEdge(DataNode t,int w){
         term = t;
         weight = w;
         nextnode = null;
-        isMainPathNode = false;
     }
 
-    public TermGraphNode getNext(){
+    public void setNext(MainPathNodeBasic next){
+        nextnode = next;
+    }
+    
+    public MainPathNodeBasic getNext(){
         return nextnode;
     }
 
@@ -36,133 +46,137 @@ class TermGraphNode {
         return weight;
     }
     
-    public ArrayList<TermGraphNode> getNextNodeList(){
-        ArrayList<TermGraphNode> res = new ArrayList<TermGraphNode>();
-        if(nextnode != null){
-            res.add(nextnode);
-        }
-        return res;
-    }
-    
-    public void setNext(TermGraphNode next){
-        nextnode = next;
-    }
-
     public DataNode getTerm(){
         return term;
     }
     
-    public boolean hasNext(){
-        return nextnode != null;
-    }
-    
     public String toString(){
-        return "" + term + "->" + nextnode;
+        return "" + term + ":" + weight + "->" + nextnode;
     }
 }
 
-class MainPathNode {
-    ArrayList<TermGraphNode> nextlist = new ArrayList<TermGraphNode>();
-    //ArrayList<TermGraphNode> fullnextList = new ArrayList<TermGraphNode>();
-    
-    public MainPathNode(DataNode t,int w,TermGraphNode next){
-        super(t,w,next);
-        addNextNode(next);
-        isMainPathNode = true;
+class MainPathNode extends MainPathNodeBasic {
+    ArrayList<TermGraphEdge> edgelist = new ArrayList<TermGraphEdge>();
+
+    public MainPathNode(){
     }
 
-    public MainPathNode(DataNode t,int w){
-        super(t,w);
-        isMainPathNode = true;
+    public void addEdge(TermGraphEdgeBasic e){
+        edgelist.add((TermGraphEdge)e);
     }
     
-    public void setNext(TermGraphNode next){
-        if(nextnode == null){
-            super.setNext(nextnode);
-            addNextNode(nextnode);
-        }
+    public ArrayList<TermGraphEdge> getEdgeList(){
+        return edgelist;
     }
     
-    public void addNextNode(TermGraphNode next){
-        nextlist.add(next);
+    public String toString(){
+        return edgelist.toString();
+    }
+}
+
+class TermPathNode {
+    DataNode term ;
+    TermPathNode next;
+    //int weight;
+    
+    TermPathNode(DataNode t){
+        term = t;
+        next = null;
+    }
+    
+    TermPathNode(DataNode t,TermPathNode n){
+        term = t;
+        next = n;
     }
 
-    public ArrayList<TermGraphNode> getNextNodeList(){
-        return nextlist;
+    TermPathNode getNext(){
+        return next;
+    }
+    
+    DataNode getTerm(){
+        return term;
+    }
+/*
+    void setWeight(int w){
+        weight = w;
+    }
+    
+    int getWeight(){
+        return weight;
+    }
+*/   
+    public String toString(){
+        return term.toString() + (next != null?next.toString():"");
     }
 }
 
 class MaxPathGenerator {
-    Map<TermGraphNode,Integer> pimap = new HashMap<TermGraphNode,Integer>();
-    ArrayList<TermGraphNode> ipmap = new ArrayList<TermGraphNode>();
+    Map<MainPathNodeBasic,Integer> pimap = new HashMap<MainPathNodeBasic,Integer>();
+    ArrayList<TermPathNode> ipmap = new ArrayList<TermPathNode>();
     int[] pweights;
-    
+
     MaxPathGenerator(){
         
     }
     
-    int countNumber(TermGraphNode s,TermGraphNode d){
+    int countNumber(MainPathNodeBasic s,MainPathNodeBasic d){
         parseGraph(s,d);/*Give each node a number to identify them*/
         return pimap.size();
     }
 
-    void parseGraph(TermGraphNode s,TermGraphNode d){
-        if( s == null ){
-            return ;
-        }
-        pimap.put(s,pimap.size() - 1);
-        ipmap.add(s);
+    void parseGraph(MainPathNodeBasic s,MainPathNodeBasic d){
+        assert(s != null):"from node is null";
+        assert(d != null):"to node is null";
+        pimap.put(s,pimap.size());
+        ipmap.add(null);
         if(s == d){
             return;
         } else {
-            for(TermGraphNode e : s.getNextNodeList()){
-                if(pimap.get(e) == null){
-                    parseGraph(e,d);
+            for(TermGraphEdge e : ((MainPathNode)s).getEdgeList()){
+                if(pimap.get(e.getNext()) == null){
+                    parseGraph(e.getNext(),d);
                 }
             }
         }
     }
     
-    public TermGraphNode maxPath(TermGraphNode s,TermGraphNode d){
+    public TermPathNode maxPath(MainPathNodeBasic s,MainPathNodeBasic d){
         pweights = new int[countNumber(s,d)];
         for(int i = 0 ; i < pweights.length;i++){
             pweights[i] = -1;
         }
-        int max = -1;
-        TermGraphNode mid = null;
-        for(TermGraphNode e : s.getNextNodeList()){
-            TermGraphNode tmp = getPath(e,d);
-            if(max < pweights[pimap.get(e).intValue()]){
-                mid = e;
-            }
-        }
-        return new TermGraphNode(s.getTerm(),s.getWeight(),mid);
+
+        return getPath(s,d);
     }
 
-    TermGraphNode getPath(TermGraphNode s,TermGraphNode d){
+    TermPathNode getPath(MainPathNodeBasic s,MainPathNodeBasic d){
         if(s == d){
-            pweights[pimap.get(d).intValue()] = d.getWeight();
-            return d;
+            return null;
         }
-
-        int max = -1;
-        
+        int max = -100;
         int idx_s = pimap.get(s).intValue();
-        TermGraphNode mid = null;
-        for(TermGraphNode e : s.getNextNodeList()){
-        
-            int idx = pimap.get(e).intValue();
+        assert(idx_s >= 0 && idx_s <  pimap.size()):"out of edge!" + idx_s;
+        TermPathNode mid = null;
+        TermGraphEdge bestedge = null;
+        for(TermGraphEdge e : ((MainPathNode)s).getEdgeList()){
+            int idx = pimap.get(e.getNext()).intValue();
             int tmp = pweights[idx];
-            if(tmp < 0){/*It is not a valid path weight value*/
-                ipmap.set(idx,getPath(e,d));
+            if(tmp < 0){
+                ipmap.set(idx,getPath(e.getNext(),d));
             }
-            if(max < tmp){
+
+            if(max < tmp + e.getWeight()){
                 max = tmp;
                 mid = ipmap.get(idx);
+                bestedge = e;
             }
+            //System.out.println(e );
         }
-        pweights[idx_s] = max + s.getWeight();
-        return new TermGraphNode(s.getTerm(),s.getWeight(),mid);
+        //System.out.println(s);
+        assert(bestedge != null):"bestedge is null!";
+        pweights[idx_s] = max + bestedge.getWeight();
+        
+        return new TermPathNode(bestedge.getTerm(),mid);
     }
 }
 
@@ -173,21 +187,16 @@ public class TermStreamGraph {
     public TermStreamGraph(final String sentence,TermWeightGetter twg){
         naturalterms = new ArrayList< MainPathNode >();
 
-        int weight = 1;
-        naturalterms.add(start = new MainPathNode(null,1));
-
+        naturalterms.add(start = new MainPathNode());
+        MainPathNode tmp = start;
         for(char c : sentence.toCharArray()){
             
             /*TODO:Choose the single-letter-term info with MAX weight*/
             TermEntry e = twg.getTermBestWeight(String.valueOf(c));
-            naturalterms.add(new MainPathNode(e.dn,weight));
+            naturalterms.add(end = new MainPathNode());
+            tmp.addEdge(new TermGraphEdge(e.dn,e.weight,end));
+            tmp = end;
         }
-        naturalterms.add(end  = new MainPathNode(null,1,null));
-
-        for(int i = 0 ; i < naturalterms.size() - 1;i++){
-            naturalterms.get(i).setNext(naturalterms.get( i + 1));
-        }
-
         /*
          * Insert every possible term
          */
@@ -207,13 +216,10 @@ public class TermStreamGraph {
     }
     
     private void addTerm(final int pos,DataNode d,final int weight){
-        /*Wow  dd*/
-        TermGraphNode t = new TermGraphNode(d,weight);
-        naturalterms.get(pos).addNextNode(t);
-        t.setNext(naturalterms.get(d.term.length() + pos + 1));
+        naturalterms.get(pos).addEdge(new TermGraphEdge(d,weight,naturalterms.get(d.term.length() + pos)));
     }
 
-    public TermGraphNode getBestPath(){
+    public TermPathNode getBestPath(){
         return (new MaxPathGenerator()).maxPath(start,end);
     }
     
