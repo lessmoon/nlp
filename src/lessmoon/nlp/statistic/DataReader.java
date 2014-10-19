@@ -1,4 +1,5 @@
 package lessmoon.nlp.statistic;
+
 import java.io.*;
 import java.util.*;
 
@@ -8,7 +9,7 @@ public class DataReader {
     char peek = ' ';
     Queue<DataNode> CachedDataNode = new LinkedList<DataNode>();
     
-    DataReader(){
+    public DataReader(){
         is = new InputStream(){
             BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
             public int getch() throws Exception {
@@ -17,7 +18,7 @@ public class DataReader {
         };
     }
 
-    DataReader(InputStream i){
+    public DataReader(InputStream i){
         is = i;
     }
     

@@ -50,6 +50,16 @@ public class TermTrieTree extends NodeBasic {
         return tif;
     }
 
+    public TermInfoNode getTermInfo(final String t){
+        TermTrieTree tmp = this;
+        for(char c : t.toCharArray()){
+            tmp = tmp.getTermTreeChildNode(c);
+            if(tmp == null)
+                return null;
+        }
+        return tmp.getTermInfo();
+    }
+    
     public TermTrieTree getTermTreeChildNode(final char c){
         return chars.get((int)c);
     }

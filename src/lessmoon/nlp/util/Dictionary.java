@@ -12,7 +12,7 @@ public class Dictionary {
     Dictionary(){
     }
     
-    void LoadData(InputStream is) throws Exception {
+    public void LoadData(InputStream is) throws Exception {
         DicReader dicreader = new DicReader(is);
         DataNode e = null;
         while((e = dicreader.readEntry()) != null){
@@ -58,6 +58,6 @@ public class Dictionary {
                 return bf.read();
             }
         });
-        System.out.println(dic.getTermInfoSet("çš„"));
+        System.out.println(dic.getTermInfoSet("ºÃ"));
     }
 }
