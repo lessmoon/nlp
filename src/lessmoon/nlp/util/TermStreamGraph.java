@@ -160,21 +160,21 @@ class MaxPathGenerator {
         TermGraphEdge bestedge = null;
         for(TermGraphEdge e : ((MainPathNode)s).getEdgeList()){
             int idx = pimap.get(e.getNext()).intValue();
-            int tmp = pweights[idx];
-            if(tmp < 0){
+
+            if(pweights[idx] < 0){
                 ipmap.set(idx,getPath(e.getNext(),d));
             }
 
-            if(max < tmp + e.getWeight()){
-                max = tmp;
+            if(max <  pweights[idx] + e.getWeight()){
+                max = pweights[idx] + e.getWeight() ;
                 mid = ipmap.get(idx);
                 bestedge = e;
             }
             //System.out.println(e );
         }
-        //System.out.println(s);
+        //System.out.println(s + "\n");
         assert(bestedge != null):"bestedge is null!";
-        pweights[idx_s] = max + bestedge.getWeight();
+        pweights[idx_s] = max;
         
         return new TermPathNode(bestedge.getTerm(),mid);
     }

@@ -27,10 +27,10 @@ public class Dictionary {
         TermTrieTree tmp = ttt;
         for(char c : term.toCharArray()){
             tmp = tmp.getTermTreeChildNode(c);
-            if(tmp == null || !tmp.isValidTerm())
+            if(tmp == null)
                 return false;
         }
-        return true;/*for convenience,return true if the term is empty string*/
+        return tmp.isValidTerm();/*for convenience,return true if the term is empty string*/
     }
 
     /* 
