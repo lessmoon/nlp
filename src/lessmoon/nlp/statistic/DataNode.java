@@ -10,7 +10,7 @@ public class DataNode {
     }
 
     public String toString() {
-        return term + ":" + type;
+        return term + "/" + type + " ";
     }
     
     

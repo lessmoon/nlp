@@ -9,7 +9,7 @@ import java.util.*;
 public class Dictionary {
     TermTrieTree ttt = new TermTrieTree();
     
-    Dictionary(){
+    public Dictionary(){
     }
     
     public void LoadData(InputStream is) throws Exception {

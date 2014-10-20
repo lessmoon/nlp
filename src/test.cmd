@@ -1,4 +1,4 @@
 ::type five.txt | java  -ea lessmoon.nlp.util.DicReader
 ::type dic.txt | java -ea lessmoon.nlp.util.Dictionary > dicTree.txt
-java -ea lessmoon.nlp.util.TermStreamGraph
+type testdata.txt | java -ea lessmoon.nlp.main.Main > seg.txt
 pause

@@ -187,7 +187,7 @@ public class TermStreamGraph {
     public TermStreamGraph(final String sentence,TermWeightGetter twg){
         naturalterms = new ArrayList< MainPathNode >();
 
-        naturalterms.add(start = new MainPathNode());
+        naturalterms.add(end = start = new MainPathNode());
         MainPathNode tmp = start;
         for(char c : sentence.toCharArray()){
             
@@ -207,7 +207,7 @@ public class TermStreamGraph {
                 TermEntry e = twg.getTermBestWeight(subterm);
                 if(e.weight > twg.MIN_LEVEL) {/*If it is valid term*/
                     /*Possible term*/
-                    System.out.println("Possible term:" + e.dn);
+                    //System.out.println("Possible term:" + e.dn);
                     addTerm(p,e.dn,e.weight);
                 }
             }
