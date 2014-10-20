@@ -143,7 +143,7 @@ class MaxPathGenerator {
     public TermPathNode maxPath(MainPathNodeBasic s,MainPathNodeBasic d){
         pweights = new int[countNumber(s,d)];
         for(int i = 0 ; i < pweights.length;i++){
-            pweights[i] = -1;
+            pweights[i] = 1;
         }
 
         return getPath(s,d);
@@ -153,7 +153,7 @@ class MaxPathGenerator {
         if(s == d){
             return null;
         }
-        int max = -100;
+        int max = 1;
         int idx_s = pimap.get(s).intValue();
         assert(idx_s >= 0 && idx_s <  pimap.size()):"out of edge!" + idx_s;
         TermPathNode mid = null;
@@ -161,16 +161,16 @@ class MaxPathGenerator {
         for(TermGraphEdge e : ((MainPathNode)s).getEdgeList()){
             int idx = pimap.get(e.getNext()).intValue();
 
-            if(pweights[idx] < 0){
+            if(pweights[idx] > 0){/*all the weight should <= 0*/
                 ipmap.set(idx,getPath(e.getNext(),d));
             }
 
-            if(max <  pweights[idx] + e.getWeight()){
+            if(max > 0 || max <=  pweights[idx] + e.getWeight()){
                 max = pweights[idx] + e.getWeight() ;
                 mid = ipmap.get(idx);
                 bestedge = e;
             }
-            //System.out.println(e );
+            //System.out.println(e);
         }
         //System.out.println(s + "\n");
         assert(bestedge != null):"bestedge is null!";
@@ -205,7 +205,7 @@ public class TermStreamGraph {
             for( int i = 2; i <= sentence.length() - p ; i++){
                 String subterm = sentence.substring(p,p + i);
                 TermEntry e = twg.getTermBestWeight(subterm);
-                if(e.weight > TermWeightGetter.ZERO_LEVEL) {/*If it is valid term*/
+                if(e.weight > twg.MIN_LEVEL) {/*If it is valid term*/
                     /*Possible term*/
                     System.out.println("Possible term:" + e.dn);
                     addTerm(p,e.dn,e.weight);

@@ -6,7 +6,8 @@ public class TermTrieTree extends NodeBasic {
     Map<Integer,TermTrieTree> chars = new HashMap<Integer,TermTrieTree>();
     TermInfoNode tif =  new TermInfoNode();
     final String term;
-
+    int   counter = 0;
+    
     public TermTrieTree(){
         super(TERMTREE);
         term = "";
@@ -35,6 +36,7 @@ public class TermTrieTree extends NodeBasic {
                 n = tmp;
             }
         }
+        counter ++;
         return n.insert(t,pos + 1,type);
     }
     
@@ -64,6 +66,10 @@ public class TermTrieTree extends NodeBasic {
         return chars.get((int)c);
     }
 
+    public int size(){
+        return counter;
+    }
+    
     public String toString() {
         StringBuffer buf = new StringBuffer();
         int len = term.length();

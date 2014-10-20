@@ -46,6 +46,10 @@ public class Dictionary {
         return tmp.getTermInfo().getTermTypes();
     }
 
+    public int size(){
+        return ttt.size();
+    }
+    
     public String toString(){
         return ttt.toString();
     }
