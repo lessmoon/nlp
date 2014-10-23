@@ -24,7 +24,7 @@ public class TermWeightGetter {
         DICTIONARY_FACTOR = Math.log(dictionary.size());
         MIN_LEVEL     =  (int)((- TRAINING_SET_FACTOR - DICTIONARY_FACTOR ) *(double)ACCURACY_FACTOR) - 1;
         Character[] dic1 = {'一','二','三','四','五','六','七','八','九','十','〇','十','百','千','万','亿'};
-        Character[] dic2 = {'１','２','３','４','５','６','７','８','９','０'};
+        Character[] dic2 = {'１','２','３','４','５','６','７','８','９','０','．','·','％'};
 
         for(Character e : dic1){
             scnumbers.add(e);
